@@ -42,6 +42,7 @@ function preload() {
 
 var cursors;
 var player;
+var trees;
 
 function create() {
 
@@ -52,14 +53,23 @@ function create() {
     groundLayer.fill(220, 0, 0, map.width, map.height);
     
     map.convertLayerToStatic(groundLayer);
+    
+    trees = this.physics.add.staticGroup()
+    
+    var tree = trees.create(20,20,"tree")
+    tree.setSize(13, 15)
+    tree.setOffset(19, 64)
 
-    var tree = this.physics.add.image(0,0, 'tree');
-    tree.setSize(24, 48, true);
+    
+    
     
     
     cursors = this.input.keyboard.createCursorKeys();
-    player = this.physics.add.sprite(150, 100, 'player');
-
+    player = this.physics.add.sprite(50, 50, 'player');
+    player.setSize(7, 7)
+    player.setOffset(player.body.offset.x, player.height - player.body.height)
+    this.physics.add.collider(player, trees);
+    
     this.anims.create({
       key: 'walk-d',
       frames: this.anims.generateFrameNumbers('player', { start: 3, end: 5 }),
@@ -112,12 +122,16 @@ function create() {
     player.anims.play('idle-d');
 
     this.cameras.main.startFollow(player, true, 0.05, 0.05);
-    
+    this.cameras.main.setZoom(3)
 }
 
 var lastDirection = "";
 
-
+function updateObjectsDepth(){
+	trees.children.entries.map(t => {
+		t.depth = 50 - player.y;
+	})
+}
 
 function update() {
   player.setVelocityY(0);
@@ -150,4 +164,5 @@ function update() {
     }
   }
   
+  updateObjectsDepth();
 }
