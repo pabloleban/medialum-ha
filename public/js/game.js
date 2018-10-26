@@ -5,7 +5,7 @@ var config = {
   physics: {
     default: 'arcade',
     arcade: {
-      debug: true
+      debug: false
     }
   },
   scene: {
@@ -42,7 +42,14 @@ function preload() {
 
 var cursors;
 var player;
+
 var trees;
+
+function addTree(x,y){
+    var tree = trees.create(x,y,"tree")
+    tree.setSize(13, 15)
+    tree.setOffset(19, 64)
+}
 
 function create() {
 
@@ -54,20 +61,18 @@ function create() {
     
     map.convertLayerToStatic(groundLayer);
     
-    trees = this.physics.add.staticGroup()
+    //init groups
+    trees = this.physics.add.staticGroup();
     
-    var tree = trees.create(20,20,"tree")
-    tree.setSize(13, 15)
-    tree.setOffset(19, 64)
+    addTree(5, 20)
+    addTree(60, 10)
+    addTree(25, 70)
 
-    
-    
-    
-    
     cursors = this.input.keyboard.createCursorKeys();
     player = this.physics.add.sprite(50, 50, 'player');
     player.setSize(7, 7)
     player.setOffset(player.body.offset.x, player.height - player.body.height)
+    player.depth = 1
     this.physics.add.collider(player, trees);
     
     this.anims.create({
@@ -129,7 +134,8 @@ var lastDirection = "";
 
 function updateObjectsDepth(){
 	trees.children.entries.map(t => {
-		t.depth = 50 - player.y;
+		console.log( t.y + 30 - player.y)
+		t.depth = t.y + 30 - player.y > 0 ? 2 : 0;
 	})
 }
 
