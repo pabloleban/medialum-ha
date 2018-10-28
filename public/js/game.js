@@ -1,5 +1,5 @@
 var config = {
-  type: Phaser.WEBGL,
+  type: Phaser.AUTO,
   width: 800,
   height: 600,
   physics: {
@@ -20,122 +20,161 @@ var config = {
 };
 
 var game = new Phaser.Game(config);
+var scene;
+console.log(scene)
+const actionZoneDistance = 16
+
+
+var allMaterials = [
+  {
+    name: "wood",
+    image: "wood.png",
+    full_name: "Madera",
+    description: "Simplemente madera.",
+    inInventory: 0
+  },
+  {
+    name: "stone",
+    image: "stone.png",
+    full_name: "Piedra",
+    description: "Duro y resistente.",
+    inInventory: 0
+  },
+  {
+    name: "sapphire",
+    image: "sapphire.png",
+    full_name: "Zafiro",
+    description: "Gema preciosa y rara.",
+    inInventory: 0
+  },
+  {
+    name: "emerald",
+    image: "emerald.png",
+    full_name: "Esmeralda",
+    description: "Gema preciosa y muy rara.",
+    inInventory: 0
+  },
+  {
+    name: "ruby",
+    image: "ruby.png",
+    full_name: "Esmeralda",
+    description: "Gema preciosa e increiblemente rara.",
+    inInventory: 0
+  },
+  {
+    name: "diamond",
+    image: "diamond.png",
+    full_name: "Diamante",
+    description: "La gema preciosa más rara de todas.",
+    inInventory: 0
+  }
+]
+
 
 function preload() {
+    scene = game.scene.scenes[0]
 
-    //  tiles are 16x16 each
     this.load.image('tiles', 'assets/images/tiles.png');
     this.load.image('tree', 'assets/images/tree.png');
-    this.load.spritesheet('player', 'assets/images/characters.png', { frameWidth: 16, frameHeight: 16 });
+    inventory.preload();
 
-    //scaling options
-    //this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+    this.load.audio('chop-1', 'assets/sounds/chop-1.mp3');
+    this.load.audio('chop-2', 'assets/sounds/chop-2.mp3');
+    this.load.audio('chop-3', 'assets/sounds/chop-3.mp3');
+    this.load.audio('chop-4', 'assets/sounds/chop-4.mp3');
+    this.load.audio('ambience-forest', 'assets/sounds/ambience-forest.mp3');
 
-    //keep going when focus lost
-    //this.stage.disableVisibilityChange = true;
 
-    //have the game centered horizontally
-    // this.scale.pageAlignHorizontally = true;
-    // this.scale.pageAlignVertically = true;
+    allMaterials.map ((m,i) => {
+      allMaterials[i].key = `m_${m.name}`;
+      this.load.spritesheet(allMaterials[i].key, `assets/images/${m.image}`, { frameWidth: 16, frameHeight: 16 })  
+    })
 
+    this.load.spritesheet('player', 'assets/images/characters.png', { frameWidth: 16, frameHeight: 16 })
 }
 
-var cursors;
+var cursors, actionKey;
+
 var player;
-
+var zone;
 var trees;
+var tilemap = [0,0,0,0,0,0,0,1,2,3]
 
-function addTree(x,y){
-    var tree = trees.create(x,y,"tree")
-    tree.setSize(13, 15)
-    tree.setOffset(19, 64)
-}
+const mapHeight = 50;
+const mapWidth = 50;
 
 function create() {
 
-    const map = this.make.tilemap({ tileWidth: 16, tileHeight: 16, width: 17, height: 13 })
-    const tiles = map.addTilesetImage('tiles');
-    var groundLayer = map.createBlankDynamicLayer('ground', tiles)
-    
-    groundLayer.fill(220, 0, 0, map.width, map.height);
-    
-    map.convertLayerToStatic(groundLayer);
-    
-    //init groups
-    trees = this.physics.add.staticGroup();
-    
-    addTree(5, 20)
-    addTree(60, 10)
-    addTree(25, 70)
+  //this.sound.add('ambience-forest').play({loop: true});
 
-    cursors = this.input.keyboard.createCursorKeys();
-    player = this.physics.add.sprite(50, 50, 'player');
-    player.setSize(7, 7)
-    player.setOffset(player.body.offset.x, player.height - player.body.height)
-    player.depth = 1
-    this.physics.add.collider(player, trees);
-    
-    this.anims.create({
-      key: 'walk-d',
-      frames: this.anims.generateFrameNumbers('player', { start: 3, end: 5 }),
-      frameRate: 10,
-      repeat: -1
-    });
-    this.anims.create({
-      key: 'walk-l',
-      frames: this.anims.generateFrameNumbers('player', { start: 15, end: 17 }),
-      frameRate: 10,
-      repeat: -1
-    });
-    this.anims.create({
-      key: 'walk-r',
-      frames: this.anims.generateFrameNumbers('player', { start: 27, end: 29 }),
-      frameRate: 10,
-      repeat: -1
-    });
-    this.anims.create({
-      key: 'walk-u',
-      frames: this.anims.generateFrameNumbers('player', { start: 39, end: 41 }),
-      frameRate: 10,
-      repeat: -1
-    });
+  var mapData = [];
 
-    this.anims.create({
-      key: 'idle-d',
-      frames: this.anims.generateFrameNumbers('player', { start: 4, end: 4 }),
-      frameRate: 10
-    });
+  for (var y = 0; y < mapHeight; y++)
+  {
+      var row = [];
 
-    this.anims.create({
-      key: 'idle-l',
-      frames: this.anims.generateFrameNumbers('player', { start: 16, end: 16 }),
-      frameRate: 10
-    });
-    
-    this.anims.create({
-      key: 'idle-r',
-      frames: this.anims.generateFrameNumbers('player', { start: 28, end: 28 }),
-      frameRate: 10
-    });
+      for (var x = 0; x < mapWidth; x++)
+      {
+          //  Scatter the tiles so we get more mud and less stones
+          var tileIndex = Phaser.Math.RND.weightedPick(tilemap);
 
-    this.anims.create({
-      key: 'idle-u',
-      frames: this.anims.generateFrameNumbers('player', { start: 40, end: 40 }),
-      frameRate: 10
-    });
+          row.push(tileIndex);
+      }
 
-    player.anims.play('idle-d');
+      mapData.push(row);
+  }
 
-    this.cameras.main.startFollow(player, true, 0.05, 0.05);
-    this.cameras.main.setZoom(3)
+
+  const map = this.make.tilemap({ data: mapData, tileWidth: 16, tileHeight: 16})
+  const tiles = map.addTilesetImage('tiles');
+  const bgLayer = map.createDynamicLayer(0, tiles, 0, 0)
+  bgLayer.setScale(3)
+
+  //init groups
+  trees = this.physics.add.staticGroup();
+  const addTree = (x,y) => {
+    var tree = trees.create(x,y,"tree")
+    tree.life = 100;
+    tree.setSize(30, 25)
+    tree.setOffset(10, 130)
+    tree.setScale(3)
+  }
+  addTree(100, 200)
+  addTree(300, 100)
+  addTree(500, 300)
+
+  cursors = this.input.keyboard.createCursorKeys();
+  actionKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.L);
+  
+
+  player = this.physics.add.sprite(50, 50, 'player');
+  player.setSize(6, 7)
+  player.setOffset(player.body.offset.x, player.height - player.body.height)
+  player.depth = 1
+  player.setScale(3)
+
+  actionZone = this.add.zone(50, 50).setSize(10, 10)
+  this.physics.world.enable(actionZone);
+  actionZone.setOrigin(0.5,0.5)
+  actionZone.setY(player.body.center.y + actionZoneDistance);
+
+  this.physics.add.collider(player, trees);
+  this.physics.add.overlap(actionZone, trees, (zone, tree) => {canChop(tree, zone)});
+
+  createPlayerAnimations();
+
+  player.anims.play('idle-d');
+
+  this.cameras.main.startFollow(player, true);
+
+  inventory.create();
 }
 
-var lastDirection = "";
+var lastDirection = "down";
 
 function updateObjectsDepth(){
 	trees.children.entries.map(t => {
-		console.log( t.y + 30 - player.y)
-		t.depth = t.y + 30 - player.y > 0 ? 2 : 0;
+		t.depth = t.y + 80 - player.y > 0 ? 2 : 0;
 	})
 }
 
@@ -143,24 +182,32 @@ function update() {
   player.setVelocityY(0);
   player.setVelocityX(0);
   if(cursors.up.isDown) {
-    player.setVelocityY(-50);
+    player.setVelocityY(-150);
     player.anims.play('walk-u', true);
     lastDirection = "up"
+    actionZone.setY(player.body.center.y - actionZoneDistance);
+    actionZone.setX(player.body.center.x);
   }
   else if(cursors.down.isDown) {
-    player.setVelocityY(50);
+    player.setVelocityY(150);
     player.anims.play('walk-d', true);
     lastDirection = "down"
+    actionZone.setY(player.body.center.y + actionZoneDistance);
+    actionZone.setX(player.body.center.x);
   }
   else if(cursors.left.isDown) {
-    player.setVelocityX(-50);
+    player.setVelocityX(-150);
     player.anims.play('walk-l', true);
     lastDirection = "left"
+    actionZone.setX(player.body.center.x - actionZoneDistance);
+    actionZone.setY(player.body.center.y);
   }
   else if(cursors.right.isDown) {
-    player.setVelocityX(50);
+    player.setVelocityX(150);
     player.anims.play('walk-r', true);
     lastDirection = "right"
+    actionZone.setX(player.body.center.x + actionZoneDistance);
+    actionZone.setY(player.body.center.y);
   } else {
     switch(lastDirection){
       case "down": player.anims.play('idle-d'); break;
@@ -171,4 +218,21 @@ function update() {
   }
   
   updateObjectsDepth();
+  inventory.update();
+}
+
+function canChop(tree, zone){
+  if(Phaser.Input.Keyboard.JustDown(actionKey)){
+    chopTree(tree);
+  }
+}
+
+function chopTree(tree){
+  tree.life -= 25
+  game.sound.add('chop-'+(Math.floor(Math.random() * 4) + 1)).play();
+  if(tree.life <= 0){
+    //tree chopped
+    tree.disableBody(true, true);
+    allMaterials[allMaterials.findIndex(m => m.name == "wood")].inInventory += 2
+  }
 }
