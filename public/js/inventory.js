@@ -15,7 +15,7 @@ const inventory = {
     },
     create: () => {
         const inventoryButton = scene.add.image(30, 30, 'inventory').setScrollFactor(0).setInteractive();
-        inventoryButton.depth = 10;
+        inventoryButton.depth = 100000;
         inventoryButton.setScale(3)
       
         rect = new Phaser.Geom.Rectangle(0, 0, inventory.width, inventory.height );
@@ -26,21 +26,21 @@ const inventory = {
         inventory.background.fillRectShape(rect);
         inventory.background.setScale(3)
         inventory.background.alpha = 0.75
-        inventory.background.depth = 10
+        inventory.background.depth = 100000
       
-        inventory.inventoryTitle = scene.add.text(300 , 160, "Mis cosas",  { fontSize: '32px'}).setScrollFactor(0);
-        inventory.inventoryTitle.depth = 11;
+        inventory.inventoryTitle = scene.add.text(300 , 160, "Materiales",  { fontSize: '32px'}).setScrollFactor(0);
+        inventory.inventoryTitle.depth = 110000;
       
         allMaterials.map((m, i) => {
           const maxRows = 3;
       
           const material = scene.add.image(170 + Math.floor(i / maxRows) * 270 , 230 + i % maxRows * 70 , m.key).setScrollFactor(0)
           const text = scene.add.text(205  + Math.floor(i / maxRows) * 270, 215 + i % maxRows * 70, m.inInventory,  { fontSize: '32px'}).setScrollFactor(0);
-          material.depth = 11;
+          material.depth = 110000;
           material.setScale(3)
       
           text.setShadow(3, 3, 'rgba(0,0,0,0.5)', 2);
-          text.depth = 11;
+          text.depth = 110000;
           text.materialName = m.name
       
           inventory.allInvIcons.push(material)
