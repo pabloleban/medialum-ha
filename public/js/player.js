@@ -138,41 +138,43 @@ const player = {
         }
     },
     chopTree: tree => {
-        tree.life -= 25
-        scene.sound.add('chop-'+(Math.floor(Math.random() * 4) + 1)).play();
-        if(tree.life <= 0){
-          //tree chopped
-          tree.disableBody(true, true);
-          allMaterials[allMaterials.findIndex(m => m.name == "wood")].inInventory += 2
-        }
+    	if(tree.life > 0){
+	        tree.life -= 25
+	        scene.sound.add('chop-'+(Math.floor(Math.random() * 4) + 1)).play();
+	        if(tree.life <= 0){
+	          //tree chopped
+	          t.disableBody();
+	          allMaterials[allMaterials.findIndex(m => m.name == "wood")].inInventory += 2
+	        }
+    	}
     },
     mineOre: ore => {
         ore.life -= 25
         scene.sound.add('mine-'+(Math.floor(Math.random() * 2) + 1)).play();
 
-        var particle_emmiter, particles;
+        var particle_emitter, particles;
 
         switch(ore.name){
             case "sapphire":
-                particle_emmiter = sapphire_emitter;
+            	particle_emitter = sapphire_emitter;
                 particles = sapphire_particle;
                 break;
             case "ruby":
-                particle_emmiter = ruby_emitter;
+            	particle_emitter = ruby_emitter;
                 particles = ruby_particle;
                 break;
             case "emerald":
-                particle_emmiter = emerald_emitter; 
+            	particle_emitter = emerald_emitter; 
                 particles = emerald_particle;
                 break;
             case "diamond":
             default:
-                particle_emmiter = diamond_emitter;
+            	particle_emitter = diamond_emitter;
                 particles = diamond_particle;
                 break;  
         }
 
-        particle_emmiter.explode((Math.floor(Math.random() * 5) + 2), ore.x,ore.y)
+        particle_emitter.explode((Math.floor(Math.random() * 5) + 2), ore.x,ore.y)
 
         particles.depth = ore.depth + 1; 
         if(ore.life <= 0){

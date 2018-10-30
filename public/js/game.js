@@ -5,7 +5,7 @@ var config = {
   physics: {
     default: 'arcade',
     arcade: {
-      debug: false
+      debug: true
     }
   },
   scene: {
@@ -75,12 +75,13 @@ function preload() {
     this.load.image('tree', 'assets/images/tree.png');
     this.load.image('sapphire', 'assets/images/sapphire_ore.png');
     this.load.image('ruby', 'assets/images/ruby_ore.png');
+	this.load.image('emerald', 'assets/images/emerald_ore.png');
+    this.load.image('diamond', 'assets/images/diamond_ore.png');
     this.load.image('ruby_particle', 'assets/images/ruby_particle.png');
     this.load.image('sapphire_particle', 'assets/images/sapphire_particle.png');
     this.load.image('emerald_particle', 'assets/images/emerald_particle.png');
     this.load.image('diamond_particle', 'assets/images/diamond_particle.png');
-    this.load.image('emerald', 'assets/images/emerald_ore.png');
-    this.load.image('diamond', 'assets/images/diamond_ore.png');
+    this.load.spritesheet('smoke', 'assets/images/smoke.png', { frameWidth: 16, frameHeight: 16 })
     inventory.preload();
 
     this.load.audio('chop-1', 'assets/sounds/chop-1.mp3');
@@ -140,10 +141,11 @@ function create() {
     var tree = trees.create(x,y,"tree")
     tree.life = 100;
     tree.setSize(30, 25)
-    tree.setOffset(10, 130)
+    tree.setOffset(10, 0)
     tree.setScale(3)
-    //tree.setOrigin(1,1)
+    tree.setOrigin(0.5,1)
     tree.depth = y;
+    tree.fallRight = Math.random() >= 0.5;
   }
   addTree(100, 200)
   addTree(300, 100)
@@ -158,7 +160,26 @@ function create() {
     frequency: -1,
     scale: {min: 2, max: 5}
   }
-
+  
+  anim = this.anims.create({
+      key: 'play',
+      frames: this.anims.generateFrameNumbers('smoke'),
+      frameRate: 10,
+      repeat: false
+  });
+  
+  smoke_particle = scene.add.particles('smoke')
+  smoke_emitter = smoke_particle.createEmitter({
+	  speed: { min: 50, max: 100 },
+	  lifespan: {min: 1000, max: 1500 },
+	  angle: { min: 220, max: 320 },
+	  rotate: { min: 0, max: 360 },
+	  gravityY: -10,
+	  //scale: { min: 3, max: 5 },
+	  frequency: -1,
+	  particleClass: SmokeParticle
+  });   
+  
   sapphire_particle = scene.add.particles('sapphire_particle')
   sapphire_emitter = sapphire_particle.createEmitter(default_emitter);   
   ruby_particle = scene.add.particles('ruby_particle')
@@ -214,7 +235,7 @@ function create() {
 
 function updateObjectsDepth(){
 	trees.children.entries.map(t => {
-		t.depth = t.y + 80
+		t.depth = t.y - 20
   })
   ores.children.entries.map(o => {
     o.depth = o.y
@@ -227,4 +248,16 @@ function update() {
   player.update();  
   updateObjectsDepth();
   inventory.update();
+  
+  trees.children.entries.map(t => {
+	  if(t.life <= 0 && ((t.fallRight && t.angle <= 90) || (!t.fallRight && t.angle >= -90))){
+		  t.angle += (t.angle + (t.fallRight ? 1 : -1)) / 30
+	  }
+	  
+	  if(t.life <= 0 && (t.angle >= 90 || t.angle <= -90)){
+		  t.disableBody(true, true);
+		  smoke_emitter.explode(10, t.x, t.y)
+		  trees.remove(t)
+	  }
+  })
 }
