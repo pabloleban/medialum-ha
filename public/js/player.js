@@ -144,7 +144,7 @@ const player = {
 	        if(tree.life <= 0){
               //tree chopped
               scene.sound.add('falling-tree', {volume: 0.1}).play();
-	          t.disableBody();
+	          tree.disableBody();
 	          allMaterials[allMaterials.findIndex(m => m.name == "wood")].inInventory += 2
 	        }
     	}
