@@ -75,7 +75,7 @@ function preload() {
     this.load.image('tree', 'assets/images/tree.png');
     this.load.image('sapphire', 'assets/images/sapphire_ore.png');
     this.load.image('ruby', 'assets/images/ruby_ore.png');
-	this.load.image('emerald', 'assets/images/emerald_ore.png');
+	  this.load.image('emerald', 'assets/images/emerald_ore.png');
     this.load.image('diamond', 'assets/images/diamond_ore.png');
     this.load.image('ruby_particle', 'assets/images/ruby_particle.png');
     this.load.image('sapphire_particle', 'assets/images/sapphire_particle.png');
@@ -88,6 +88,7 @@ function preload() {
     this.load.audio('chop-2', 'assets/sounds/chop-2.mp3');
     this.load.audio('chop-3', 'assets/sounds/chop-3.mp3');
     this.load.audio('chop-4', 'assets/sounds/chop-4.mp3');
+    this.load.audio('falling-tree', 'assets/sounds/falling-tree.mp3');
     this.load.audio('mine-1', 'assets/sounds/mine-1.mp3');
     this.load.audio('mine-2', 'assets/sounds/mine-2.mp3');
     this.load.audio('ambience-forest', 'assets/sounds/ambience-forest.mp3');
@@ -108,9 +109,8 @@ const mapWidth = 50;
 
 function create() {
 
-  var ambience = this.sound.add('ambience-forest');
+  var ambience = this.sound.add('ambience-forest', {volume: 0.3});
   ambience.play({loop: true});
-  ambience.volume = 0.3;
 
   var mapData = [];
 
@@ -135,6 +135,9 @@ function create() {
   const bgLayer = map.createDynamicLayer(0, tiles, 0, 0)
   bgLayer.setScale(3)
 
+  smoke_particle = scene.add.particles('smoke')
+  smoke_particle.depth = 999999999
+
   //init groups
   trees = this.physics.add.staticGroup();
   const addTree = (x,y) => {
@@ -146,7 +149,26 @@ function create() {
     tree.setOrigin(0.5,1)
     tree.depth = y;
     tree.fallRight = Math.random() >= 0.5;
-  }
+ 
+    var treeSource = {
+      getRandomPoint: function (vec){  
+          return vec.setTo(Phaser.Math.Between(tree.x, tree.x - (tree.height * 3 * (tree.fallRight ? -1 : 1))), tree.y);
+      }
+    }
+
+    tree.smoke_emitter = smoke_particle.createEmitter({
+      speed: { min: 50, max: 100 },
+      lifespan: {min: 1000, max: 1500 },
+      angle: { min: 220, max: 320 },
+      rotate: { min: 0, max: 360 },
+      gravityY: -10,
+      scale: { min: 3, max: 5 },
+      frequency: -1,
+      particleClass: SmokeParticle,
+      emitZone: { type: "random", source: treeSource}
+    });
+  };
+
   addTree(100, 200)
   addTree(300, 100)
   addTree(500, 300)
@@ -167,18 +189,6 @@ function create() {
       frameRate: 10,
       repeat: false
   });
-  
-  smoke_particle = scene.add.particles('smoke')
-  smoke_emitter = smoke_particle.createEmitter({
-	  speed: { min: 50, max: 100 },
-	  lifespan: {min: 1000, max: 1500 },
-	  angle: { min: 220, max: 320 },
-	  rotate: { min: 0, max: 360 },
-	  gravityY: -10,
-	  //scale: { min: 3, max: 5 },
-	  frequency: -1,
-	  particleClass: SmokeParticle
-  });   
   
   sapphire_particle = scene.add.particles('sapphire_particle')
   sapphire_emitter = sapphire_particle.createEmitter(default_emitter);   
@@ -251,12 +261,12 @@ function update() {
   
   trees.children.entries.map(t => {
 	  if(t.life <= 0 && ((t.fallRight && t.angle <= 90) || (!t.fallRight && t.angle >= -90))){
-		  t.angle += (t.angle + (t.fallRight ? 1 : -1)) / 30
+		  t.angle += (t.angle + (t.fallRight ? 1 : -1)) / 55
 	  }
-	  
+
 	  if(t.life <= 0 && (t.angle >= 90 || t.angle <= -90)){
-		  t.disableBody(true, true);
-		  smoke_emitter.explode(10, t.x, t.y)
+      t.disableBody(true, true);
+		  t.smoke_emitter.explode(80)
 		  trees.remove(t)
 	  }
   })

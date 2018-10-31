@@ -8,21 +8,22 @@ class SmokeParticle extends Phaser.GameObjects.Particles.Particle
         this.i = 0;
     }
 
-    update (delta, step, processors)
-    {
-        super.update(delta, step, processors);
+    // update (delta, step, processors)
+    // {
+        //super.update(delta, step, processors);
 
-        this.t += delta;
+        // this.t += delta;
 		
-        if (this.t >= anim.msPerFrame && this.i < anim.frames.length - 1)
-        {
-            this.i++;
+        // if (this.t >= anim.msPerFrame && this.i < anim.frames.length - 1)
+        // {
+        //     this.i++;
 
-            this.frame = anim.frames[this.i].frame;
+        //     this.frame = anim.frames[this.i].frame;
 
-            this.t -= anim.msPerFrame;
-        }
-		
-		console.log(this)
-    }
+        //     this.t -= anim.msPerFrame;
+        // }
+        
+        
+		// console.log(this)
+    // }
 }

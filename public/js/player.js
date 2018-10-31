@@ -142,7 +142,8 @@ const player = {
 	        tree.life -= 25
 	        scene.sound.add('chop-'+(Math.floor(Math.random() * 4) + 1)).play();
 	        if(tree.life <= 0){
-	          //tree chopped
+              //tree chopped
+              scene.sound.add('falling-tree', {volume: 0.1}).play();
 	          t.disableBody();
 	          allMaterials[allMaterials.findIndex(m => m.name == "wood")].inInventory += 2
 	        }
@@ -180,7 +181,7 @@ const player = {
         if(ore.life <= 0){
             //ore mined chopped
             ore.disableBody(true, true);
-            particle_emmiter.explode((Math.floor(Math.random() * 8) + 5), ore.x,ore.y)
+            particle_emitter.explode((Math.floor(Math.random() * 8) + 5), ore.x,ore.y)
             allMaterials[allMaterials.findIndex(m => m.name == ore.name)].inInventory += 2
         }
     }
