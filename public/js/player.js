@@ -9,6 +9,8 @@ const player = {
     downKey: null,
     rightKey: null,
     leftKey: null,
+    energyBackground: null,
+    energyText: null,
     upKeyPressed: () => player.cursors.up.isDown || player.upKey.isDown,
     downKeyPressed: () => player.cursors.down.isDown || player.downKey.isDown,
     rightKeyPressed: () => player.cursors.right.isDown || player.rightKey.isDown,
@@ -39,6 +41,18 @@ const player = {
 
         player.object.anims.play('idle-d');
       
+        rect = new Phaser.Geom.Rectangle(0, 0, 60, 10 );
+        
+        player.energyBackground = scene.add.graphics({ fillStyle: { color: 0x0000ff } });
+        player.energyBackground.setPosition(70,15)
+        player.energyBackground.setScrollFactor(0)
+        player.energyBackground.fillRectShape(rect);
+        player.energyBackground.setScale(3)
+        player.energyBackground.alpha = 0.75
+        player.energyBackground.depth = 100000
+        
+        player.energyText = scene.add.text(120 , 20, "10/10",  { fontSize: '24px'}).setScrollFactor(0);
+        player.energyText.depth = 110000;
 
     },
     update: () => {

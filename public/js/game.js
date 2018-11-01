@@ -248,7 +248,7 @@ function updateObjectsDepth(){
 		t.depth = t.y - 20
   })
   ores.children.entries.map(o => {
-    o.depth = o.y
+    o.depth = o.y + 10
   })
   
   player.object.depth = player.object.y 
