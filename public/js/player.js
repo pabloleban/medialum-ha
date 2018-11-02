@@ -3,6 +3,8 @@ const player = {
     lastDirection: "down",
     actionZone: null,
     actionZoneDistance: 16,
+    energy: 10,
+    maxEnergy: 10,
     cursors: null,
     actionKey: null,
     upKey: null,
@@ -10,6 +12,7 @@ const player = {
     rightKey: null,
     leftKey: null,
     energyBackground: null,
+    energyBar: null,
     energyText: null,
     upKeyPressed: () => player.cursors.up.isDown || player.upKey.isDown,
     downKeyPressed: () => player.cursors.down.isDown || player.downKey.isDown,
@@ -41,20 +44,41 @@ const player = {
 
         player.object.anims.play('idle-d');
       
-        rect = new Phaser.Geom.Rectangle(0, 0, 60, 10 );
-        
-        player.energyBackground = scene.add.graphics({ fillStyle: { color: 0x0000ff } });
-        player.energyBackground.setPosition(70,15)
-        player.energyBackground.setScrollFactor(0)
-        player.energyBackground.fillRectShape(rect);
-        player.energyBackground.setScale(3)
-        player.energyBackground.alpha = 0.75
-        player.energyBackground.depth = 100000
-        
-        player.energyText = scene.add.text(120 , 20, "10/10",  { fontSize: '24px'}).setScrollFactor(0);
+        player.energyBar = new Phaser.GameObjects.Graphics(scene).setScrollFactor(0);
+        player.energyText = scene.add.text(125 , 19, player.energy+"/"+player.maxEnergy,  { fontSize: '24px', align: 'center'}).setScrollFactor(0);
+        player.energyBar.x = 30
+        player.energyBar.y = 7
         player.energyText.depth = 110000;
-
+        player.energyBar.depth = 100000
+        scene.add.existing(player.energyBar);
+        player.updateEnergyBar();
     },
+
+    updateEnergyBar: () => {
+
+        var barScale = 20;
+
+        player.energyBar.clear();
+        //BG
+        player.energyBar.fillStyle(0x000000);
+        player.energyBar.fillRect(player.energyBar.x, player.energyBar.y, player.maxEnergy * barScale, 30);
+
+        //Energy
+        // player.energyBar.fillStyle(0xffffff);
+        // player.energyBar.fillRect(player.energyBar.x + 2, player.energyBar.y + 2, 76, 12);
+
+        if (player.energy < player.maxEnergy * 0.2) {
+            player.energyBar.fillStyle(0xff0000);
+        } else {
+            player.energyBar.fillStyle(0x0000ff);
+        }
+
+        var d = Math.floor((player.maxEnergy * barScale - 4) / player.maxEnergy * player.energy);
+console.log(d)
+        player.energyBar.fillRect(player.energyBar.x + 2, player.energyBar.y + 2, d, 26);
+        player.energyText.setText(player.energy+"/"+player.maxEnergy);
+    },
+
     update: () => {
         player.object.setVelocityY(0);
         player.object.setVelocityX(0);
