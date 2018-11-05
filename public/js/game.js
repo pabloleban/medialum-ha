@@ -5,7 +5,7 @@ var config = {
   physics: {
     default: 'arcade',
     arcade: {
-      debug: false
+      debug: true
     }
   },
   scene: {
@@ -21,6 +21,7 @@ var config = {
 
 var game = new Phaser.Game(config);
 var scene;
+let player;
 
 var allMaterials = [
   {
@@ -71,6 +72,8 @@ var allMaterials = [
 function preload() {
     scene = game.scene.scenes[0]
 
+    this.load.spritesheet('player', 'assets/images/characters.png', { frameWidth: 16, frameHeight: 16 })
+
     this.load.image('tiles', 'assets/images/tiles.png');
     this.load.image('tree', 'assets/images/tree.png');
     this.load.image('sapphire', 'assets/images/sapphire_ore.png');
@@ -93,87 +96,23 @@ function preload() {
     this.load.audio('mine-2', 'assets/sounds/mine-2.mp3');
     this.load.audio('ambience-forest', 'assets/sounds/ambience-forest.mp3');
 
-    player.preload();
-
     allMaterials.map ((m,i) => {
       allMaterials[i].key = `m_${m.name}`;
       this.load.spritesheet(allMaterials[i].key, `assets/images/${m.image}`, { frameWidth: 16, frameHeight: 16 })  
     })
 }
 
-var trees;
-var tilemap = [0,0,0,0,0,0,0,1,2,3]
 
-const mapHeight = 50;
-const mapWidth = 50;
 
 function create() {
 
   var ambience = this.sound.add('ambience-forest', {volume: 0.3});
   ambience.play({loop: true});
 
-  var mapData = [];
+  smokeParticle = scene.add.particles('smoke')
+  smokeParticle.depth = 999999999
 
-  for (var y = 0; y < mapHeight; y++)
-  {
-      var row = [];
-
-      for (var x = 0; x < mapWidth; x++)
-      {
-          //  Scatter the tiles so we get more mud and less stones
-          var tileIndex = Phaser.Math.RND.weightedPick(tilemap);
-
-          row.push(tileIndex);
-      }
-
-      mapData.push(row);
-  }
-
-
-  const map = this.make.tilemap({ data: mapData, tileWidth: 16, tileHeight: 16})
-  const tiles = map.addTilesetImage('tiles');
-  const bgLayer = map.createDynamicLayer(0, tiles, 0, 0)
-  bgLayer.setScale(3)
-
-  smoke_particle = scene.add.particles('smoke')
-  smoke_particle.depth = 999999999
-
-  //init groups
-  trees = this.physics.add.staticGroup();
-  const addTree = (x,y) => {
-    var tree = trees.create(x,y,"tree")
-    tree.life = 100;
-    tree.setSize(30, 25)
-    tree.setOffset(10, 0)
-    tree.setScale(3)
-    tree.setOrigin(0.5,1)
-    tree.depth = y;
-    tree.fallRight = Math.random() >= 0.5;
- 
-    var treeSource = {
-      getRandomPoint: function (vec){  
-          return vec.setTo(Phaser.Math.Between(tree.x, tree.x - (tree.height * 3 * (tree.fallRight ? -1 : 1))), tree.y);
-      }
-    }
-
-    tree.smoke_emitter = smoke_particle.createEmitter({
-      speed: { min: 50, max: 100 },
-      lifespan: {min: 1000, max: 1500 },
-      angle: { min: 220, max: 320 },
-      rotate: { min: 0, max: 360 },
-      gravityY: -10,
-      scale: { min: 3, max: 5 },
-      frequency: -1,
-      particleClass: SmokeParticle,
-      emitZone: { type: "random", source: treeSource}
-    });
-  };
-
-  addTree(100, 200)
-  addTree(300, 100)
-  addTree(500, 300)
-
-  var default_emitter = {
+  var defaultEmitter = {
     speed: {min: 140, max: 200},
     lifespan: {min:700, max: 1000},
     angle: { min: 220, max: 320 },
@@ -182,7 +121,16 @@ function create() {
     frequency: -1,
     scale: {min: 2, max: 5}
   }
+
+  player = new Player(scene, 500, 500);
+  map = new Map(scene, player);
+
+  map.addTree(100, 200)
+  map.addTree(300, 100)
+  map.addTree(500, 300)
   
+  this.physics.add.collider(player, map.trees);
+
   anim = this.anims.create({
       key: 'play',
       frames: this.anims.generateFrameNumbers('smoke'),
@@ -191,67 +139,34 @@ function create() {
   });
   
   sapphire_particle = scene.add.particles('sapphire_particle')
-  sapphire_emitter = sapphire_particle.createEmitter(default_emitter);   
+  sapphire_emitter = sapphire_particle.createEmitter(defaultEmitter);   
   ruby_particle = scene.add.particles('ruby_particle')
-  ruby_emitter = ruby_particle.createEmitter(default_emitter);   
+  ruby_emitter = ruby_particle.createEmitter(defaultEmitter);   
   emerald_particle = scene.add.particles('emerald_particle')
-  emerald_emitter = emerald_particle.createEmitter(default_emitter)
+  emerald_emitter = emerald_particle.createEmitter(defaultEmitter)
   diamond_particle = scene.add.particles('diamond_particle')
-  diamond_emitter = diamond_particle.createEmitter(default_emitter);
+  diamond_emitter = diamond_particle.createEmitter(defaultEmitter);
 
-  ores = this.physics.add.staticGroup();
-  const addOre = (x,y,oreName) => {
-    var ore = ores.create(x,y,oreName)
-    ore.life = 100;
-    ore.name = oreName;
-    switch(oreName){
-      case "sapphire":
-        ore.setSize(40, 30)
-        ore.setOffset(-4, 25)
-        break;
-      case "ruby":
-        ore.setSize(60, 38)
-        ore.setOffset(-15, 13)
-        break;
-      case "emerald":
-        ore.setSize(40, 35)
-        ore.setOffset(-4, 25)  
-        break;
-      case "diamond":
-        ore.setSize(45, 30)
-        ore.setOffset(-15, 30)
-        break;  
-    }
-    ore.setScale(3)
-    ore.depth = y;
-  }
-  addOre(350, 250,"sapphire")
-  addOre(550, 350,"diamond")
-  addOre(850, 650,"ruby")
-  addOre(150, 750,"emerald")
-  
-  player.create();
+  map.addOre(350, 250,"sapphire")
+  map.addOre(550, 350,"diamond")
+  map.addOre(850, 650,"ruby")
+  map.addOre(150, 750,"emerald")
 
-  this.physics.add.collider(player.object, trees);
-  this.physics.add.collider(player.object, ores);
-  this.physics.add.overlap(player.actionZone, trees, (zone, tree) => {player.canChop(tree, zone)});
-  this.physics.add.overlap(player.actionZone, ores, (zone, ore) => {player.canMine(ore, zone)});
-
-  this.cameras.main.startFollow(player.object, true);
+  this.cameras.main.startFollow(player, true);
 
   inventory.create();
   
 }
 
 function updateObjectsDepth(){
-	trees.children.entries.map(t => {
+	map.trees.children.entries.map(t => {
 		t.depth = t.y - 20
   })
-  ores.children.entries.map(o => {
+  map.ores.children.entries.map(o => {
     o.depth = o.y + 10
   })
   
-  player.object.depth = player.object.y 
+  player.depth = player.y 
 }
 
 function update() {
@@ -259,15 +174,15 @@ function update() {
   updateObjectsDepth();
   inventory.update();
   
-  trees.children.entries.map(t => {
+  map.trees.children.entries.map(t => {
 	  if(t.life <= 0 && ((t.fallRight && t.angle <= 90) || (!t.fallRight && t.angle >= -90))){
 		  t.angle += (t.angle + (t.fallRight ? 1 : -1)) / 55
 	  }
 
 	  if(t.life <= 0 && (t.angle >= 90 || t.angle <= -90)){
       t.disableBody(true, true);
-		  t.smoke_emitter.explode(80)
-		  trees.remove(t)
+		  t.smokeEmitter.explode(80)
+		  map.trees.remove(t)
 	  }
   })
 }
