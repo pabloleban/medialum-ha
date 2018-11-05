@@ -14,6 +14,8 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.lastDirection = "down"
 
         this.actionZoneDistance = 16
+        this.energy = 4
+        this.maxEnergy = 10
         
         this.actionZone = this.scene.add.zone(50, 50)
         this.actionZone.setSize(10, 10);
@@ -22,6 +24,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.actionZone.setY(this.body.center.y + this.actionZoneDistance);
 
         this.controller = new PlayerController(this.scene);
+        this.energyBar = new EnergyBar(this, this.scene);
         this.scene.add.existing(this);
     }
 
@@ -76,6 +79,16 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         if(Phaser.Input.Keyboard.JustDown(this.controller.actionKey)){
             ore.mine();
         }
+    }
+
+    decreaseEnergy(amount){
+        if(this.energy - amount <= 0 ){
+            this.energy = 0;
+        } else {
+            this.energy -= amount;
+        }
+
+        this.energyBar.updateEnergyBar();
     }
 
     createAnimations(){

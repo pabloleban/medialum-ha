@@ -43,6 +43,7 @@ class Tree extends Phaser.Physics.Arcade.Image {
                 this.scene.sound.add('falling-tree', {volume: 0.1}).play();
                 this.disableBody();
                 allMaterials[allMaterials.findIndex(m => m.name == "wood")].inInventory += 2
+                player.decreaseEnergy(1)
 	        }
     	}
     }

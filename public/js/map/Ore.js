@@ -64,6 +64,7 @@ class Ore extends Phaser.Physics.Arcade.Image{
             this.disableBody(true, true);
             particle_emitter.explode((Math.floor(Math.random() * 8) + 5), this.x, this.y)
             allMaterials[allMaterials.findIndex(m => m.name == this.name)].inInventory += 2
+            player.decreaseEnergy(1)
         }
     }
     

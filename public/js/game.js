@@ -70,7 +70,7 @@ var allMaterials = [
 
 
 function preload() {
-    scene = game.scene.scenes[0]
+    scene = this;
 
     this.load.spritesheet('player', 'assets/images/characters.png', { frameWidth: 16, frameHeight: 16 })
 
