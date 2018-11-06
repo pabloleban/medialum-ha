@@ -75,6 +75,7 @@ function preload() {
     this.load.spritesheet('player', 'assets/images/characters.png', { frameWidth: 16, frameHeight: 16 })
 
     this.load.image('tiles', 'assets/images/tiles.png');
+    this.load.image('fences', 'assets/images/fences.png');
     this.load.image('tree', 'assets/images/tree.png');
     this.load.image('sapphire', 'assets/images/sapphire_ore.png');
     this.load.image('ruby', 'assets/images/ruby_ore.png');
