@@ -14,7 +14,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.lastDirection = "down"
 
         this.actionZoneDistance = 16
-        this.energy = 4
+        this.energy = 10
         this.maxEnergy = 10
         
         this.actionZone = this.scene.add.zone(50, 50)

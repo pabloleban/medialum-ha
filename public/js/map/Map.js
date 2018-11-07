@@ -7,8 +7,8 @@ class Map {
         this.ores = this.scene.physics.add.group({immovable:true});        
         this.tilemap = [0,0,0,0,0,0,0,1,2,3]
         this.fenceTiles = {topLeft: 0, topRight: 1, bottomLeft: 8, bottomRight: 10, verticalLeft: 4, verticalRight: 2, horizontal: 9}
-        this.mapHeight = 50;
-        this.mapWidth = 50;        
+        this.mapHeight = 25;
+        this.mapWidth = 25;        
         var mapData = [];
         var fenceData = [];
 
@@ -19,14 +19,29 @@ class Map {
                 var tileIndex = Phaser.Math.RND.weightedPick(this.tilemap);
                 row.push(tileIndex);
 
-                if(y == 0 || y == this.mapHeight){
-                    if(x == 0){
-                        fenceRow.push(this.fenceTiles.topLeft)
-                    } else if(x == this.mapWidth) {
-                        fenceRow.push(this.fenceTiles.topRight)
-                    } else {
-                        fenceRow.push(this.fenceTiles.horizontal)
-                    }
+                if(y == 0 && x == 0){
+                    //top left
+                    fenceRow.push(this.fenceTiles.topLeft)
+                } else if(y == 0 && x == this.mapWidth){
+                    //top right
+                    fenceRow.push(this.fenceTiles.topRight)
+                } else if(y == this.mapHeight && x == 0){
+                    //bottom left
+                    fenceRow.push(this.fenceTiles.bottomLeft)
+                } else if(y == this.mapHeight && x == this.mapWidth){
+                    //bottom right
+                    fenceRow.push(this.fenceTiles.bottomRight)
+                } else if((y == 0 || y == this.mapHeight) && x > 0 && x < this.mapWidth){
+                    //horizontal
+                    fenceRow.push(this.fenceTiles.horizontal)
+                } else if(x == 0 && y > 0 && y < this.mapHeight){
+                    //vertical left
+                    fenceRow.push(this.fenceTiles.verticalLeft)
+                } else if(x == this.mapWidth && y > 0 && y < this.mapHeight){
+                    //vertical right
+                    fenceRow.push(this.fenceTiles.verticalRight)
+                } else {
+                    fenceRow.push(-1);
                 }
             }
             mapData.push(row);
