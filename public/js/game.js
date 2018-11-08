@@ -153,7 +153,7 @@ function create() {
   map.addOre(850, 650,"ruby")
   map.addOre(150, 750,"emerald")
 
-  this.cameras.main.startFollow(player, true);
+  this.cameras.main.startFollow(player, true, 0.05, 0.05);
 
   inventory.create();
   

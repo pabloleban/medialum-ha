@@ -7,8 +7,10 @@ class Map {
         this.ores = this.scene.physics.add.group({immovable:true});        
         this.tilemap = [0,0,0,0,0,0,0,1,2,3]
         this.fenceTiles = {topLeft: 0, topRight: 1, bottomLeft: 8, bottomRight: 10, verticalLeft: 4, verticalRight: 2, horizontal: 9}
-        this.mapHeight = 25;
-        this.mapWidth = 25;        
+        this.mapHeight = 50;
+        this.mapWidth = 50;
+        this.fencePadding = 10
+
         var mapData = [];
         var fenceData = [];
 
@@ -19,25 +21,25 @@ class Map {
                 var tileIndex = Phaser.Math.RND.weightedPick(this.tilemap);
                 row.push(tileIndex);
 
-                if(y == 0 && x == 0){
+                if(y == 0 + this.fencePadding && x == 0 + this.fencePadding){
                     //top left
                     fenceRow.push(this.fenceTiles.topLeft)
-                } else if(y == 0 && x == this.mapWidth){
+                } else if(y == 0 + this.fencePadding && x == this.mapWidth - this.fencePadding){
                     //top right
                     fenceRow.push(this.fenceTiles.topRight)
-                } else if(y == this.mapHeight && x == 0){
+                } else if(y == this.mapHeight - this.fencePadding && x == 0 + this.fencePadding){
                     //bottom left
                     fenceRow.push(this.fenceTiles.bottomLeft)
-                } else if(y == this.mapHeight && x == this.mapWidth){
+                } else if(y == this.mapHeight - this.fencePadding && x == this.mapWidth - this.fencePadding){
                     //bottom right
                     fenceRow.push(this.fenceTiles.bottomRight)
-                } else if((y == 0 || y == this.mapHeight) && x > 0 && x < this.mapWidth){
+                } else if((y == 0 + this.fencePadding || y == this.mapHeight - this.fencePadding) && x > 0 + this.fencePadding && x < this.mapWidth - this.fencePadding){
                     //horizontal
                     fenceRow.push(this.fenceTiles.horizontal)
-                } else if(x == 0 && y > 0 && y < this.mapHeight){
+                } else if(x == 0 + this.fencePadding && y > 0 + this.fencePadding && y < this.mapHeight - this.fencePadding){
                     //vertical left
                     fenceRow.push(this.fenceTiles.verticalLeft)
-                } else if(x == this.mapWidth && y > 0 && y < this.mapHeight){
+                } else if(x == this.mapWidth - this.fencePadding && y > 0 + this.fencePadding && y < this.mapHeight - this.fencePadding){
                     //vertical right
                     fenceRow.push(this.fenceTiles.verticalRight)
                 } else {
@@ -52,10 +54,12 @@ class Map {
         const tiles = this.map.addTilesetImage('tiles');
         this.grassLayer = this.map.createDynamicLayer(0, tiles, 0, 0)
         this.grassLayer.setScale(3)
+
         this.fence = this.scene.make.tilemap({ data: fenceData, tileWidth: 16, tileHeight: 16})
         const talass = this.fence.addTilesetImage('fences')
         this.fenceLayer = this.fence.createDynamicLayer(0, talass, 0, 0)
         this.fenceLayer.setScale(3)
+        this.fence
     
         this.scene.physics.add.collider(this.player, this.trees);
         this.scene.physics.add.collider(this.player, this.ores);
@@ -64,12 +68,28 @@ class Map {
     }
 
     addTree(x, y){
-        this.trees.add(new Tree(this.scene, x, y))
+        if(this.insidePlayableMap(x,y)){
+            this.trees.add(new Tree(this.scene, x, y))
+        }  
     }
 
     addOre(x, y, oreName){
-        this.ores.add(new Ore(this.scene, x, y, oreName))
+        if(this.insidePlayableMap(x,y)){
+            this.ores.add(new Ore(this.scene, x, y, oreName))
+        }
     }
 
-    
+    insidePlayableMap(x,y){
+        if(x < this.fencePadding * 16 * 3 || x > this.mapWidth  * 16 * 3 - this.fencePadding * 16 * 3){
+            console.error(`Coordinate x: ${x} is outside the playable area`);
+            return false;
+        }
+
+        if(y < this.fencePadding * 16 * 3 || y > this.mapHeight * 16 * 3 - this.fencePadding * 16 * 3){
+            console.error(`Coordinate y: ${y} is outside the playable area`);
+            return false;
+        }
+
+        return true;
+    }
 }
