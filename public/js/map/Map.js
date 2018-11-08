@@ -61,6 +61,9 @@ class Map {
         this.scene.physics.add.collider(this.player, this.ores);
         this.scene.physics.add.overlap(this.player.actionZone, this.trees, (zone, tree) => {player.canChop(tree, zone)});
         this.scene.physics.add.overlap(this.player.actionZone, this.ores, (zone, ore) => {player.canMine(ore, zone)});
+
+        var bird = new Bird(this.scene, 200, 200);
+        
     }
 
     addTree(x, y){

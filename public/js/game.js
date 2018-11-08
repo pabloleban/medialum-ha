@@ -5,7 +5,7 @@ var config = {
   physics: {
     default: 'arcade',
     arcade: {
-      debug: true
+      debug: false
     }
   },
   scene: {
@@ -73,6 +73,8 @@ function preload() {
     scene = this;
 
     this.load.spritesheet('player', 'assets/images/characters.png', { frameWidth: 16, frameHeight: 16 })
+
+    this.load.spritesheet('birds', 'assets/images/birds.png', { frameWidth: 32, frameHeight: 32 })
 
     this.load.image('tiles', 'assets/images/tiles.png');
     this.load.image('fences', 'assets/images/fences.png');
@@ -170,8 +172,7 @@ function updateObjectsDepth(){
   player.depth = player.y 
 }
 
-function update() {
-  player.update();  
+function update() { 
   updateObjectsDepth();
   inventory.update();
   

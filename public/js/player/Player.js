@@ -28,7 +28,9 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.scene.add.existing(this);
     }
 
-    update() {
+    preUpdate(time, delta) {
+        super.preUpdate(time, delta);
+
         this.body.setVelocityY(0);
         this.body.setVelocityX(0);
         
