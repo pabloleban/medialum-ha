@@ -10,7 +10,12 @@ class Map {
         this.mapHeight = 50;
         this.mapWidth = 50;
         this.fencePadding = 10
-
+        this.playableArea = {
+            minX: this.fencePadding * 16 * 3, 
+            maxX: this.mapWidth  * 16 * 3 - this.fencePadding * 16 * 3,
+            minY: this.fencePadding * 16 * 3, 
+            maxY: this.mapHeight  * 16 * 3 - this.fencePadding * 16 * 3,
+        }
         var mapData = [];
         var fenceData = [];
 
@@ -56,39 +61,40 @@ class Map {
         this.grassLayer.setScale(3)
 
         this.fence = this.scene.make.tilemap({ data: fenceData, tileWidth: 16, tileHeight: 16})
-        const talass = this.fence.addTilesetImage('fences')
-        this.fenceLayer = this.fence.createDynamicLayer(0, talass, 0, 0)
+        const fenceTileset = this.fence.addTilesetImage('fences')
+        this.fenceLayer = this.fence.createDynamicLayer(0, fenceTileset, 0, 0)
         this.fenceLayer.setScale(3)
-        this.fence
     
-        this.scene.physics.add.collider(this.player, this.trees);
+        var bird = new Bird(this.player, this.scene, 750, 750);
+
+        this.scene.physics.add.collider(bird, this.trees);
+        this.scene.physics.add.collider(bird, this.ores);
         this.scene.physics.add.collider(this.player, this.ores);
+        this.scene.physics.add.collider(this.player, this.trees);
         this.scene.physics.add.overlap(this.player.actionZone, this.trees, (zone, tree) => {player.canChop(tree, zone)});
         this.scene.physics.add.overlap(this.player.actionZone, this.ores, (zone, ore) => {player.canMine(ore, zone)});
-
-        var bird = new Bird(this.scene, 200, 200);
         
     }
 
     addTree(x, y){
-        if(this.insidePlayableMap(x,y)){
-            this.trees.add(new Tree(this.scene, x, y))
+        if(this.insidePlayableMap(x, y)){
+            this.trees.add(new Tree(this.scene, this.playableArea.minX + x, this.playableArea.minY + y))
         }  
     }
 
     addOre(x, y, oreName){
-        if(this.insidePlayableMap(x,y)){
-            this.ores.add(new Ore(this.scene, x, y, oreName))
+        if(this.insidePlayableMap(x, y)){
+            this.ores.add(new Ore(this.scene, this.playableArea.minX + x, this.playableArea.minY + y, oreName))
         }
     }
 
     insidePlayableMap(x,y){
-        if(x < this.fencePadding * 16 * 3 || x > this.mapWidth  * 16 * 3 - this.fencePadding * 16 * 3){
+        if(x + this.playableArea.minX < this.playableArea.minX || x + this.playableArea.minX > this.playableArea.maxX){
             console.error(`Coordinate x: ${x} is outside the playable area`);
             return false;
         }
 
-        if(y < this.fencePadding * 16 * 3 || y > this.mapHeight * 16 * 3 - this.fencePadding * 16 * 3){
+        if(y + this.playableArea.minY < this.playableArea.minY || y + this.playableArea.minY > this.playableArea.maxY){
             console.error(`Coordinate y: ${y} is outside the playable area`);
             return false;
         }

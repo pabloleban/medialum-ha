@@ -5,7 +5,7 @@ var config = {
   physics: {
     default: 'arcade',
     arcade: {
-      debug: false
+      debug: true
     }
   },
   scene: {
@@ -110,7 +110,7 @@ function preload() {
 function create() {
 
   var ambience = this.sound.add('ambience-forest', {volume: 0.3});
-  ambience.play({loop: true});
+  //ambience.play({loop: true});
 
   smokeParticle = scene.add.particles('smoke')
   smokeParticle.depth = 999999999
@@ -125,7 +125,7 @@ function create() {
     scale: {min: 2, max: 5}
   }
 
-  player = new Player(scene, 500, 500);
+  player = new Player(scene, 1000, 1000);
   map = new Map(scene, player);
 
   map.addTree(100, 200)
