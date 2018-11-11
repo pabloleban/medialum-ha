@@ -5,7 +5,7 @@ var config = {
   physics: {
     default: 'arcade',
     arcade: {
-      debug: true
+      debug: false
     }
   },
   scene: {
@@ -98,6 +98,7 @@ function preload() {
     this.load.audio('mine-1', 'assets/sounds/mine-1.mp3');
     this.load.audio('mine-2', 'assets/sounds/mine-2.mp3');
     this.load.audio('ambience-forest', 'assets/sounds/ambience-forest.mp3');
+    this.load.audio('bird-flap', 'assets/sounds/bird-flap.mp3');
 
     allMaterials.map ((m,i) => {
       allMaterials[i].key = `m_${m.name}`;
@@ -110,7 +111,7 @@ function preload() {
 function create() {
 
   var ambience = this.sound.add('ambience-forest', {volume: 0.3});
-  //ambience.play({loop: true});
+  ambience.play({loop: true});
 
   smokeParticle = scene.add.particles('smoke')
   smokeParticle.depth = 999999999
@@ -132,6 +133,10 @@ function create() {
   map.addTree(300, 100)
   map.addTree(500, 300)
   
+  map.addBird(750, 750);
+  map.addBird(800, 770);
+  map.addBird(650, 770);
+  
   this.physics.add.collider(player, map.trees);
 
   anim = this.anims.create({
@@ -150,12 +155,12 @@ function create() {
   diamond_particle = scene.add.particles('diamond_particle')
   diamond_emitter = diamond_particle.createEmitter(defaultEmitter);
 
-  map.addOre(350, 250,"sapphire")
-  map.addOre(550, 350,"diamond")
-  map.addOre(850, 650,"ruby")
-  map.addOre(150, 750,"emerald")
+  map.addOre(350, 250, "sapphire")
+  map.addOre(550, 350, "diamond")
+  map.addOre(850, 650, "ruby")
+  map.addOre(150, 750, "emerald")
 
-  this.cameras.main.startFollow(player, true, 0.05, 0.05);
+  this.cameras.main.startFollow(player, true);
 
   inventory.create();
   
@@ -168,6 +173,11 @@ function updateObjectsDepth(){
   map.ores.children.entries.map(o => {
     o.depth = o.y + 10
   })
+
+  map.birds.children.entries.map(b => {
+    b.depth = b.y
+  })
+  
   
   player.depth = player.y 
 }

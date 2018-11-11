@@ -13,8 +13,6 @@ class Bird extends Phaser.Physics.Arcade.Sprite {
         this.setSize(6,6)
         this.setOffset(13,23);
         this.createAnimations();
-        this.anims.play('b-idle-r');
-        this.lastDirection = "down"
 
         this.flyAwayZone = this.scene.add.zone(50, 50)
         this.flyAwayZone.setSize(200, 200);
@@ -26,7 +24,7 @@ class Bird extends Phaser.Physics.Arcade.Sprite {
 
         this.possibleMoveDirections = ["up","down","left","right"]
         this.tempMoveDirections = this.possibleMoveDirections.slice(0);
-        this.nextMoveTime = 2000;
+        this.nextMoveTime = 0;
 
         this.scene.physics.add.overlap(this.player, this.flyAwayZone, player => { this.flyAway(player) });
     }
@@ -37,9 +35,9 @@ class Bird extends Phaser.Physics.Arcade.Sprite {
         this.flyAwayZone.setY(this.body.center.y);
         this.flyAwayZone.setX(this.body.center.x);
 
+        this.moveCounter += delta;
 
         if(this.idle){
-            this.moveCounter += delta;
 
             if(this.moveCounter > this.nextMoveTime){
                 if(this.tempMoveDirections.length <= 0){
@@ -93,44 +91,70 @@ class Bird extends Phaser.Physics.Arcade.Sprite {
         } else {
             this.body.setVelocityX(this.flyDirection.x);
             this.body.setVelocityY(this.flyDirection.y);
+            if(this.moveCounter > this.nextMoveTime){
+                this.idle = true;
+                this.body.setVelocityX(0)
+                this.body.setVelocityY(0)
+            }
         }
     }
 
     flyAway(player){
         if(this.idle){
             this.idle = false;
+            this.moveCounter = 0;
             this.body.setVelocityX(0)
             this.body.setVelocityY(0)
+
             this.flyDirection = {
-                x: player.x < this.x ? 200 : -200,
-                y: player.y < this.y ? 200 : -200
+                x: this.x - player.x,
+                y: this.y - player.y
             }
+
+            if(this.flyDirection.x < 20 && this.flyDirection.x > -20){
+                if(this.flyDirection.y > 0){
+                    this.anims.play('fly-d')
+                } else {
+                    this.anims.play('fly-u')
+                }
+            } else {
+                if(this.flyDirection.x > 0){
+                    this.anims.play('fly-r')
+                } else {
+                    this.anims.play('fly-l')
+                }
+            }
+
+            this.flyDirection.x = this.flyDirection.x * 2.5
+            this.flyDirection.y = this.flyDirection.y * 2.5
+
+            this.scene.sound.add('bird-flap').play()
         }
     }
     
     createAnimations(){
         this.scene.anims.create({
             key: 'fly-d',
-            frames: scene.anims.generateFrameNumbers('birds', { start: 3, end: 5 }),
-            frameRate: 10,
+            frames: scene.anims.generateFrameNumbers('birds', { start: 51, end: 53 }),
+            frameRate: 30,
             repeat: -1
         });
         this.scene.anims.create({
             key: 'fly-l',
-            frames: scene.anims.generateFrameNumbers('birds', { start: 15, end: 17 }),
-            frameRate: 10,
+            frames: scene.anims.generateFrameNumbers('birds', { start: 63, end: 65 }),
+            frameRate: 30,
             repeat: -1
         });
         this.scene.anims.create({
             key: 'fly-r',
-            frames: scene.anims.generateFrameNumbers('birds', { start: 27, end: 29 }),
-            frameRate: 10,
+            frames: scene.anims.generateFrameNumbers('birds', { start: 75, end: 77 }),
+            frameRate: 30,
             repeat: -1
         });
         this.scene.anims.create({
             key: 'fly-u',
-            frames: scene.anims.generateFrameNumbers('birds', { start: 39, end: 41 }),
-            frameRate: 10,
+            frames: scene.anims.generateFrameNumbers('birds', { start: 87, end: 89 }),
+            frameRate: 30,
             repeat: -1
         });
     
