@@ -1,4 +1,4 @@
-class Tree extends Phaser.Physics.Arcade.Image {   
+class Tree extends Phaser.Physics.Arcade.Sprite {   
     constructor(scene, x, y){
         super(scene, x, y);
         this.scene = scene;
@@ -46,5 +46,18 @@ class Tree extends Phaser.Physics.Arcade.Image {
                 player.decreaseEnergy(1)
 	        }
     	}
+    }
+
+    preUpdate(time, delta){
+        super.preUpdate(time, delta);
+
+        if(this.life <= 0 && ((this.fallRight && this.angle <= 90) || (!this.fallRight && this.angle >= -90))){
+            this.angle += (this.angle + (this.fallRight ? 1 : -1)) / 55
+        }
+    
+        if(this.life <= 0 && (this.angle >= 90 || this.angle <= -90)){
+            this.disableBody(true, true);
+            this.smokeEmitter.explode(80)
+        }
     }
 }

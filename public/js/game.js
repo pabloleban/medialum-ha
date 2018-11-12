@@ -111,7 +111,7 @@ function preload() {
 function create() {
 
   var ambience = this.sound.add('ambience-forest', {volume: 0.3});
-  ambience.play({loop: true});
+  //ambience.play({loop: true});
 
   smokeParticle = scene.add.particles('smoke')
   smokeParticle.depth = 999999999
@@ -185,16 +185,4 @@ function updateObjectsDepth(){
 function update() { 
   updateObjectsDepth();
   inventory.update();
-  
-  map.trees.children.entries.map(t => {
-	  if(t.life <= 0 && ((t.fallRight && t.angle <= 90) || (!t.fallRight && t.angle >= -90))){
-		  t.angle += (t.angle + (t.fallRight ? 1 : -1)) / 55
-	  }
-
-	  if(t.life <= 0 && (t.angle >= 90 || t.angle <= -90)){
-      t.disableBody(true, true);
-		  t.smokeEmitter.explode(80)
-		  map.trees.remove(t)
-	  }
-  })
 }
