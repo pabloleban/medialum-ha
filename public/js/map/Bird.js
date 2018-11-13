@@ -22,6 +22,7 @@ class Bird extends Phaser.Physics.Arcade.Sprite {
         this.moveCounter = 0;
         this.scene.add.existing(this);
 
+        this.maxFlyAwaySpeed = 200;
         this.possibleMoveDirections = ["up","down","left","right"]
         this.tempMoveDirections = this.possibleMoveDirections.slice(0);
         this.nextMoveTime = 0;
@@ -99,7 +100,7 @@ class Bird extends Phaser.Physics.Arcade.Sprite {
         }
     }
 
-    flyAway(player){
+    flyAway(fromObject){
         if(this.idle){
             this.idle = false;
             this.moveCounter = 0;
@@ -107,10 +108,22 @@ class Bird extends Phaser.Physics.Arcade.Sprite {
             this.body.setVelocityY(0)
 
             this.flyDirection = {
-                x: this.x - player.x,
-                y: this.y - player.y
+                x: this.x - fromObject.x,
+                y: this.y - fromObject.y
             }
 
+            if(this.flyDirection.x > this.maxFlyAwaySpeed){
+                this.flyDirection.x = this.maxFlyAwaySpeed
+            } else if(this.flyDirection.x < -this.maxFlyAwaySpeed){
+                this.flyDirection.x = -this.maxFlyAwaySpeed
+            }
+
+            if(this.flyDirection.y > this.maxFlyAwaySpeed){
+                this.flyDirection.y = this.maxFlyAwaySpeed
+            } else if(this.flyDirection.y < -this.maxFlyAwaySpeed){
+                this.flyDirection.y = -this.maxFlyAwaySpeed
+            }
+            
             if(this.flyDirection.x < 20 && this.flyDirection.x > -20){
                 if(this.flyDirection.y > 0){
                     this.anims.play('fly-d')

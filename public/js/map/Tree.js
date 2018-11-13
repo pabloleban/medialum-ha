@@ -14,8 +14,9 @@ class Tree extends Phaser.Physics.Arcade.Sprite {
         this.fallRight = Math.random() >= 0.5;
  
         var treeSource = {
+            tree: this,
             getRandomPoint: function (vec){  
-                return vec.setTo(Phaser.Math.Between(this.x, this.x - (this.height * 3 * (this.fallRight ? -1 : 1))), this.y);
+                return vec.setTo(Phaser.Math.Between(this.tree.x, this.tree.x - (this.tree.height * 3 * (this.tree.fallRight ? -1 : 1))), this.tree.y);
             }
         }
 
@@ -58,6 +59,9 @@ class Tree extends Phaser.Physics.Arcade.Sprite {
         if(this.life <= 0 && (this.angle >= 90 || this.angle <= -90)){
             this.disableBody(true, true);
             this.smokeEmitter.explode(80)
+            map.birds.children.entries.map(b => {
+                b.flyAway(this)
+            })
         }
     }
 }
