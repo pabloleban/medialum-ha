@@ -113,6 +113,29 @@ function create() {
   var ambience = this.sound.add('ambience-forest', {volume: 0.3});
   //ambience.play({loop: true});
 
+  
+  const sampleText = [
+    "Estás muy cansado!",
+    "Volvé mañana."
+  ]
+
+  const bottomText = this.make.text({
+    x: 0,
+    y: 0,
+    text: sampleText,  
+    style: { 
+      fontSize: '32px',
+      metrics: {
+        ascent: 50,
+        descent: 10,
+        fontSize: 55
+      }
+    }
+  });
+  bottomText.setScrollFactor(0)
+
+  bottomText.depth = 100000;
+
   smokeParticle = scene.add.particles('smoke')
   smokeParticle.depth = 999999999
 

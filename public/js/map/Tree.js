@@ -12,6 +12,7 @@ class Tree extends Phaser.Physics.Arcade.Sprite {
         this.depth = y;
         this.life = 100;
         this.fallRight = Math.random() >= 0.5;
+        this.fallingImpactRange = 400
  
         var treeSource = {
             tree: this,
@@ -60,7 +61,9 @@ class Tree extends Phaser.Physics.Arcade.Sprite {
             this.disableBody(true, true);
             this.smokeEmitter.explode(80)
             map.birds.children.entries.map(b => {
-                b.flyAway(this)
+                if(this.x - b.x < this.fallingImpactRange && this.x - b.x > -this.fallingImpactRange && this.y - b.y < this.fallingImpactRange && this.y - b.y > -this.fallingImpactRange){
+                    b.flyAway(this)
+                }
             })
         }
     }
