@@ -1,5 +1,5 @@
 class PlayerController{
-    constructor(scene) {
+    constructor() {
         this.cursors = scene.input.keyboard.createCursorKeys();
         this.actionKey = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.L)
         this.upKey = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W)

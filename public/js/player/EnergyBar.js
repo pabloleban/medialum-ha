@@ -1,6 +1,5 @@
 class EnergyBar {
-    constructor(player, scene){
-        this.scene = scene;
+    constructor(player){
         this.player = player;
         this.energyBar = new Phaser.GameObjects.Graphics(scene);        
         this.energyBar.setScrollFactor(0);
@@ -10,7 +9,7 @@ class EnergyBar {
         this.energyText.depth = 110000;
         this.energyBar.depth = 100000
         
-        this.scene.add.existing(this.energyBar);
+        scene.add.existing(this.energyBar);
         this.updateEnergyBar();
     }
 

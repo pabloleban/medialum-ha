@@ -1,10 +1,9 @@
 class Tree extends Phaser.Physics.Arcade.Sprite {   
-    constructor(scene, x, y){
+    constructor(x, y){
         super(scene, x, y);
-        this.scene = scene;
         this.setTexture("tree");
         this.setPosition(x, y);
-        this.scene.physics.world.enable(this);
+        scene.physics.world.enable(this);
         this.setSize(12, 10)
         this.setOffset(19, 70)
         this.setScale(3)
@@ -33,16 +32,16 @@ class Tree extends Phaser.Physics.Arcade.Sprite {
             emitZone: { type: "random", source: treeSource}
         });
 
-        this.scene.add.existing(this);
+        scene.add.existing(this);
     }    
 
     chop(){
     	if(this.life > 0){
 	        this.life -= 25
-	        this.scene.sound.add('chop-'+(Math.floor(Math.random() * 4) + 1)).play();
+	        scene.sound.add('chop-'+(Math.floor(Math.random() * 4) + 1)).play();
 	        if(this.life <= 0){
                 //tree chopped
-                this.scene.sound.add('falling-tree', {volume: 0.1}).play();
+                scene.sound.add('falling-tree', {volume: 0.1}).play();
                 this.disableBody();
                 allMaterials[allMaterials.findIndex(m => m.name == "wood")].inInventory += 2
                 player.decreaseEnergy(1)

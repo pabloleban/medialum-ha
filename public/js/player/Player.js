@@ -1,10 +1,9 @@
 class Player extends Phaser.Physics.Arcade.Sprite {
-    constructor(scene, x, y){
+    constructor(x, y){
         super(scene, x, y);
-        this.scene = scene;
         this.setTexture("player");
         this.setPosition(x, y);
-        this.scene.physics.world.enable(this);
+        scene.physics.world.enable(this);
         this.body.setSize(6, 7)
         this.body.setOffset(this.body.offset.x, this.height - this.body.height)
         this.setScale(3)
@@ -17,15 +16,15 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.energy = 10
         this.maxEnergy = 10
         
-        this.actionZone = this.scene.add.zone(50, 50)
+        this.actionZone = scene.add.zone(50, 50)
         this.actionZone.setSize(10, 10);
         this.actionZone.setOrigin(0.5,0.5)
-        this.scene.physics.world.enable(this.actionZone);
+        scene.physics.world.enable(this.actionZone);
         this.actionZone.setY(this.body.center.y + this.actionZoneDistance);
 
-        this.controller = new PlayerController(this.scene);
-        this.energyBar = new EnergyBar(this, this.scene);
-        this.scene.add.existing(this);
+        this.controller = new PlayerController();
+        this.energyBar = new EnergyBar(this);
+        scene.add.existing(this);
     }
 
     preUpdate(time, delta) {
@@ -94,47 +93,47 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     createAnimations(){
-        this.scene.anims.create({
+        scene.anims.create({
             key: 'walk-d',
             frames: scene.anims.generateFrameNumbers('player', { start: 3, end: 5 }),
             frameRate: 10,
             repeat: -1
         });
-        this.scene.anims.create({
+        scene.anims.create({
             key: 'walk-l',
             frames: scene.anims.generateFrameNumbers('player', { start: 15, end: 17 }),
             frameRate: 10,
             repeat: -1
         });
-        this.scene.anims.create({
+        scene.anims.create({
             key: 'walk-r',
             frames: scene.anims.generateFrameNumbers('player', { start: 27, end: 29 }),
             frameRate: 10,
             repeat: -1
         });
-        this.scene.anims.create({
+        scene.anims.create({
             key: 'walk-u',
             frames: scene.anims.generateFrameNumbers('player', { start: 39, end: 41 }),
             frameRate: 10,
             repeat: -1
         });
     
-        this.scene.anims.create({
+        scene.anims.create({
             key: 'idle-d',
             frames: scene.anims.generateFrameNumbers('player', { start: 4, end: 4 }),
         });
     
-        this.scene.anims.create({
+        scene.anims.create({
             key: 'idle-l',
             frames: scene.anims.generateFrameNumbers('player', { start: 16, end: 16 }),
         });
     
-        this.scene.anims.create({
+        scene.anims.create({
             key: 'idle-r',
             frames: scene.anims.generateFrameNumbers('player', { start: 28, end: 28 }),
         });
     
-        this.scene.anims.create({
+        scene.anims.create({
             key: 'idle-u',
             frames: scene.anims.generateFrameNumbers('player', { start: 40, end: 40 }),
         });

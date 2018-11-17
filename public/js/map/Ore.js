@@ -1,11 +1,10 @@
 class Ore extends Phaser.Physics.Arcade.Image{
-    constructor(scene, x, y, oreName){
+    constructor(x, y, oreName){
         super(scene, x, y);
-        this.scene = scene;
         this.name = oreName;
         this.setTexture(this.name)
         this.life = 100;
-        this.scene.physics.world.enable(this);
+        scene.physics.world.enable(this);
         switch(this.name){
           case "sapphire":
             this.setSize(18, 10)
@@ -27,12 +26,12 @@ class Ore extends Phaser.Physics.Arcade.Image{
         this.setScale(3)
         this.depth = y;
 
-        this.scene.add.existing(this);
+        scene.add.existing(this);
     }
 
     mine(){
         this.life -= 25
-        this.scene.sound.add('mine-'+(Math.floor(Math.random() * 2) + 1)).play();
+        scene.sound.add('mine-'+(Math.floor(Math.random() * 2) + 1)).play();
 
         var particle_emitter, particles;
 

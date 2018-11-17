@@ -1,11 +1,9 @@
 class Map {
-    constructor(scene, player){
-        this.scene = scene;
+    constructor(player){
         this.player = player;
-
-        this.trees = this.scene.physics.add.group({immovable:true});
-        this.ores = this.scene.physics.add.group({immovable:true});        
-        this.birds = this.scene.physics.add.group(); 
+        this.trees = scene.physics.add.group({immovable:true});
+        this.ores = scene.physics.add.group({immovable:true});        
+        this.birds = scene.physics.add.group(); 
         this.tilemap = [0,0,0,0,0,0,0,1,2,3]
         this.fenceTiles = {topLeft: 0, topRight: 1, bottomLeft: 8, bottomRight: 10, verticalLeft: 4, verticalRight: 2, horizontal: 9}
         this.mapHeight = 50;
@@ -56,37 +54,37 @@ class Map {
             fenceData.push(fenceRow)
         }
       
-        this.map = this.scene.make.tilemap({ data: mapData, tileWidth: 16, tileHeight: 16})
+        this.map = scene.make.tilemap({ data: mapData, tileWidth: 16, tileHeight: 16})
         const tiles = this.map.addTilesetImage('tiles');
         this.grassLayer = this.map.createDynamicLayer(0, tiles, 0, 0)
         this.grassLayer.setScale(3)
 
-        this.fence = this.scene.make.tilemap({ data: fenceData, tileWidth: 16, tileHeight: 16})
+        this.fence = scene.make.tilemap({ data: fenceData, tileWidth: 16, tileHeight: 16})
         const fenceTileset = this.fence.addTilesetImage('fences')
         this.fenceLayer = this.fence.createDynamicLayer(0, fenceTileset, 0, 0)
         this.fenceLayer.setScale(3);
 
-        this.scene.physics.add.collider(this.player, this.ores);
-        this.scene.physics.add.collider(this.player, this.trees);
-        this.scene.physics.add.overlap(this.player.actionZone, this.trees, (zone, tree) => {player.canChop(tree, zone)});
-        this.scene.physics.add.overlap(this.player.actionZone, this.ores, (zone, ore) => {player.canMine(ore, zone)});
+        scene.physics.add.collider(this.player, this.ores);
+        scene.physics.add.collider(this.player, this.trees);
+        scene.physics.add.overlap(this.player.actionZone, this.trees, (zone, tree) => {player.canChop(tree, zone)});
+        scene.physics.add.overlap(this.player.actionZone, this.ores, (zone, ore) => {player.canMine(ore, zone)});
         
     }
 
     addTree(x, y){
         if(this.insidePlayableMap(x, y)){
-            this.trees.add(new Tree(this.scene, this.playableArea.minX + x, this.playableArea.minY + y))
+            this.trees.add(new Tree(this.playableArea.minX + x, this.playableArea.minY + y))
         }  
     }
 
     addOre(x, y, oreName){
         if(this.insidePlayableMap(x, y)){
-            this.ores.add(new Ore(this.scene, this.playableArea.minX + x, this.playableArea.minY + y, oreName))
+            this.ores.add(new Ore(this.playableArea.minX + x, this.playableArea.minY + y, oreName))
         }
     }
 
     addBird(x, y){
-        this.birds.add(new Bird(this.player, this.scene, x, y))
+        this.birds.add(new Bird(this.player, x, y))
     }
 
     insidePlayableMap(x,y){
