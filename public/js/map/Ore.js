@@ -30,6 +30,11 @@ class Ore extends Phaser.Physics.Arcade.Image{
     }
 
     mine(){
+        if(player.energy <= 0){
+            player.showTired();
+            return;
+        }
+
         this.life -= 25
         scene.sound.add('mine-'+(Math.floor(Math.random() * 2) + 1)).play();
 

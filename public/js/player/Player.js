@@ -68,17 +68,20 @@ class Player extends Phaser.Physics.Arcade.Sprite {
                 case "up": this.anims.play('idle-u'); break;
             }
         }
+        if(Phaser.Input.Keyboard.JustDown(this.controller.actionKey) && bottomText.opened){
+            bottomText.nextText();
+        }
     }
 
     canChop(tree, zone){
-        if(Phaser.Input.Keyboard.JustDown(this.controller.actionKey)){
-            tree.chop();
+        if(Phaser.Input.Keyboard.JustDown(this.controller.actionKey) && !bottomText.opened){
+            tree.chop()
         }
     }
 
     canMine(ore, zone){
-        if(Phaser.Input.Keyboard.JustDown(this.controller.actionKey)){
-            ore.mine();
+        if(Phaser.Input.Keyboard.JustDown(this.controller.actionKey) && !bottomText.opened){
+            ore.mine()
         }
     }
 
@@ -90,6 +93,10 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         }
 
         this.energyBar.updateEnergyBar();
+    }
+
+    showTired(){
+        bottomText.show("Estás muy cansado!\nVolvé mañana.")
     }
 
     createAnimations(){

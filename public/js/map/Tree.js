@@ -36,6 +36,11 @@ class Tree extends Phaser.Physics.Arcade.Sprite {
     }    
 
     chop(){
+        if(player.energy <= 0){
+            player.showTired();
+            return;
+        }
+
     	if(this.life > 0){
 	        this.life -= 25
 	        scene.sound.add('chop-'+(Math.floor(Math.random() * 4) + 1)).play();

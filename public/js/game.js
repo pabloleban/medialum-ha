@@ -113,7 +113,7 @@ function create() {
   var ambience = this.sound.add('ambience-forest', {volume: 0.3});
   //ambience.play({loop: true});
 
-  var bottomText = new BottomText();
+  bottomText = new BottomText();
 
   smokeParticle = scene.add.particles('smoke')
   smokeParticle.depth = 999999999
