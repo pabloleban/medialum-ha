@@ -14,7 +14,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.lastDirection = "down"
 
         this.actionZoneDistance = 16
-        this.energy = 10
+        this.energy = 3
         this.maxEnergy = 10
         this.speed = 150
         
@@ -26,7 +26,6 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.actionZone.setY(this.body.center.y + this.actionZoneDistance);
 
         this.controller = new PlayerController();
-        this.energyBar = new EnergyBar(this);
         scene.add.existing(this);
     }
 
@@ -85,19 +84,19 @@ class Player extends Phaser.Physics.Arcade.Sprite {
             }
         }
         
-        if(Phaser.Input.Keyboard.JustDown(this.controller.actionKey) && bottomText.opened){
-            bottomText.nextText();
+        if(Phaser.Input.Keyboard.JustDown(this.controller.actionKey) && ui.bottomText.opened){
+            ui.bottomText.nextText();
         }
     }
 
     canChop(tree, zone){
-        if(Phaser.Input.Keyboard.JustDown(this.controller.actionKey) && !bottomText.opened){
+        if(Phaser.Input.Keyboard.JustDown(this.controller.actionKey) && !ui.bottomText.opened){
             tree.chop()
         }
     }
 
     canMine(ore, zone){
-        if(Phaser.Input.Keyboard.JustDown(this.controller.actionKey) && !bottomText.opened){
+        if(Phaser.Input.Keyboard.JustDown(this.controller.actionKey) && !ui.bottomText.opened){
             ore.mine()
         }
     }
@@ -113,7 +112,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     showTired(){
-        bottomText.show("Estás muy cansado!\nVolvé mañana.")
+        ui.bottomText.show("Estás muy cansado!\nVolvé mañana.")
     }
 
     createAnimations(){

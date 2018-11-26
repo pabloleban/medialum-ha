@@ -76,6 +76,8 @@ function preload() {
 
     this.load.spritesheet('birds', 'assets/images/birds.png', { frameWidth: 32, frameHeight: 32 })
 
+    this.load.image('note', 'assets/images/note.png');
+
     this.load.image('tiles', 'assets/images/tiles.png');
     this.load.image('fences', 'assets/images/fences.png');
     this.load.image('tree', 'assets/images/tree.png');
@@ -115,7 +117,8 @@ function create() {
   var ambience = this.sound.add('ambience-forest', {volume: 0.3});
   ambience.play({loop: true});
 
-  bottomText = new BottomText();
+  player = new Player(1000, 1000);
+  ui = new UI();
 
   smokeParticle = scene.add.particles('smoke')
   smokeParticle.depth = 999999999
@@ -130,7 +133,6 @@ function create() {
     scale: {min: 2, max: 5}
   }
 
-  player = new Player(1000, 1000);
   map = new Map(player);
 
   map.addTree(100, 200)
