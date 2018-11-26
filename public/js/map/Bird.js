@@ -140,7 +140,7 @@ class Bird extends Phaser.Physics.Arcade.Sprite {
             this.flyDirection.x = this.flyDirection.x * 2.5
             this.flyDirection.y = this.flyDirection.y * 2.5
 
-            scene.sound.add('bird-flap').play()
+            scene.sound.add('bird-flap', {volume: 0.2}).play()
         }
     }
     

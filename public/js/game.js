@@ -90,6 +90,8 @@ function preload() {
     this.load.spritesheet('smoke', 'assets/images/smoke.png', { frameWidth: 16, frameHeight: 16 })
     inventory.preload();
 
+    this.load.audio('step-grass-1', 'assets/sounds/step-grass-1.mp3');
+    this.load.audio('step-grass-2', 'assets/sounds/step-grass-2.mp3');
     this.load.audio('chop-1', 'assets/sounds/chop-1.mp3');
     this.load.audio('chop-2', 'assets/sounds/chop-2.mp3');
     this.load.audio('chop-3', 'assets/sounds/chop-3.mp3');
@@ -111,7 +113,7 @@ function preload() {
 function create() {
 
   var ambience = this.sound.add('ambience-forest', {volume: 0.3});
-  //ambience.play({loop: true});
+  ambience.play({loop: true});
 
   bottomText = new BottomText();
 
