@@ -10,10 +10,12 @@ class BottomText extends Phaser.GameObjects.Graphics {
         this.textIndex = 0
         this.opened = false;
 
-        this.bottomText = scene.add.text(0, config.height - 200, "", 
-        {fontSize: '32px',
-            padding: 32,
-            lineSpacing: 10}
+        this.bottomText = scene.add.dynamicBitmapText(0, config.height - 200, "normal_font", "", 32,
+        // {fontSize: '10px',
+        //     padding: 32,
+        //     lineSpacing: 10,
+        //     fontFamily:"vcr"
+        // }
         );
         this.bottomText.setScrollFactor(0)
         this.bottomText.depth = 200000;

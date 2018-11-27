@@ -68,21 +68,10 @@ var allMaterials = [
   }
 ]
 
-function init (){
-    //  Inject our CSS
-    var element = document.createElement('style');
-
-    document.head.appendChild(element);
-
-    var sheet = element.sheet;
-
-    var styles = '@font-face { font-family: "troika"; src: url("assets/fonts/VCR_OSD_MONO_1.001.ttf") format("opentype"); }\n';
-
-    sheet.insertRule(styles, 0);
-}
-
 function preload() {
     scene = this;
+
+    this.load.bitmapFont('normal_font', 'assets/fonts/font.png', 'assets/fonts/font.fnt');
 
     this.load.spritesheet('player', 'assets/images/characters.png', { frameWidth: 16, frameHeight: 16 })
 
@@ -131,6 +120,8 @@ function create() {
 
   player = new Player(1000, 1000);
   ui = new UI();
+
+  ui.bottomText.show("Hola capo.")
 
   smokeParticle = scene.add.particles('smoke')
   smokeParticle.depth = 999999999
