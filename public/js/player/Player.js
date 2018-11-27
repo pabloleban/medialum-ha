@@ -108,7 +108,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
             this.energy -= amount;
         }
 
-        this.energyBar.updateEnergyBar();
+        ui.energyBar.updateEnergyBar();
     }
 
     showTired(){

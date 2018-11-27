@@ -8,17 +8,28 @@ class MuteButton extends Phaser.Physics.Arcade.Image{
         this.on('pointerdown', function (event) {
             this.toggleMute();
         });
-
+        this.depth = 10000000
+        this.setScrollFactor(0)
+        this.setInteractive();
+        this.updateButton();
         scene.add.existing(this);
     }
 
     toggleMute(){
-        if(muted){
-            muted = false;
+        if(this.muted){
+            this.muted = false;
         } else {
-            muted = true;
+            this.muted = true;
         }
-
         game.sound.mute = this.muted
+        this.updateButton();
+    }
+
+    updateButton(){
+        if(this.muted){
+            this.alpha = 0.4
+        } else {
+            this.alpha = 1
+        }
     }
 }

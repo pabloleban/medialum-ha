@@ -68,6 +68,18 @@ var allMaterials = [
   }
 ]
 
+function init (){
+    //  Inject our CSS
+    var element = document.createElement('style');
+
+    document.head.appendChild(element);
+
+    var sheet = element.sheet;
+
+    var styles = '@font-face { font-family: "troika"; src: url("assets/fonts/VCR_OSD_MONO_1.001.ttf") format("opentype"); }\n';
+
+    sheet.insertRule(styles, 0);
+}
 
 function preload() {
     scene = this;
