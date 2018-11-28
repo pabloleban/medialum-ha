@@ -2,7 +2,7 @@ class EnergyBar {
     constructor(){
         this.energyBar = new Phaser.GameObjects.Graphics(scene);        
         this.energyBar.setScrollFactor(0);
-        this.energyText = scene.add.text(125 , 19, "",  { fontSize: '24px', align: 'center'}).setScrollFactor(0);
+        this.energyText = scene.add.dynamicBitmapText(125 , 12, "normal_font", "", 32).setScrollFactor(0);
         this.energyBar.x = 30
         this.energyBar.y = 7
         this.energyText.depth = 110000;

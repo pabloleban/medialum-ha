@@ -20,6 +20,7 @@ var config = {
 };
 
 var game = new Phaser.Game(config);
+const playerPrefs = new PlayerPrefs();
 var scene;
 let player;
 
@@ -120,8 +121,6 @@ function create() {
 
   player = new Player(1000, 1000);
   ui = new UI();
-
-  ui.bottomText.show("Hola capo.")
 
   smokeParticle = scene.add.particles('smoke')
   smokeParticle.depth = 999999999
