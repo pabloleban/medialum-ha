@@ -28,18 +28,18 @@ const inventory = {
         inventory.background.alpha = 0.75
         inventory.background.depth = 100000
       
-        inventory.inventoryTitle = scene.add.text(300 , 160, "Materiales",  { fontSize: '32px'}).setScrollFactor(0);
+        inventory.inventoryTitle = scene.add.bitmapText(330 , 160, "normal_font", "Materiales", 32).setScrollFactor(0);
         inventory.inventoryTitle.depth = 110000;
       
         allMaterials.map((m, i) => {
           const maxRows = 3;
       
           const material = scene.add.image(170 + Math.floor(i / maxRows) * 270 , 230 + i % maxRows * 70 , m.key).setScrollFactor(0)
-          const text = scene.add.text(205  + Math.floor(i / maxRows) * 270, 215 + i % maxRows * 70, m.inInventory,  { fontSize: '32px'}).setScrollFactor(0);
+          const text = scene.add.dynamicBitmapText(205  + Math.floor(i / maxRows) * 270, 212 + i % maxRows * 70, "normal_font", "", 32).setScrollFactor(0)
+
           material.depth = 110000;
           material.setScale(3)
       
-          text.setShadow(3, 3, 'rgba(0,0,0,0.5)', 2);
           text.depth = 110000;
           text.materialName = m.name
       

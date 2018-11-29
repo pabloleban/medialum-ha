@@ -54,7 +54,9 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         }
         else if(this.controller.downKeyPressed()) {
             this.body.setVelocityY(this.speed);
-            this.anims.play('walk-d', true);
+            if(this.velocity != 0){
+                this.anims.play('walk-d', true);
+            }
             this.lastDirection = "down"
             this.actionZone.setY(this.body.center.y + this.actionZoneDistance);
             this.actionZone.setX(this.body.center.x);
