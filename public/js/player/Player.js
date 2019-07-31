@@ -26,6 +26,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.actionZone.setY(this.body.center.y + this.actionZoneDistance);
 
         this.controller = new PlayerController();
+
         scene.add.existing(this);
     }
 
@@ -85,20 +86,20 @@ class Player extends Phaser.Physics.Arcade.Sprite {
                 case "up": this.anims.play('idle-u'); break;
             }
         }
-        
-        if(Phaser.Input.Keyboard.JustDown(this.controller.actionKey) && ui.bottomText.opened){
+
+        if(this.controller.actionKeyJustPressed() && ui.bottomText.opened){
             ui.bottomText.nextText();
         }
     }
 
     canChop(tree, zone){
-        if(Phaser.Input.Keyboard.JustDown(this.controller.actionKey) && !ui.bottomText.opened){
+        if(this.controller.actionKeyJustPressed() && !ui.bottomText.opened){
             tree.chop()
         }
     }
 
     canMine(ore, zone){
-        if(Phaser.Input.Keyboard.JustDown(this.controller.actionKey) && !ui.bottomText.opened){
+        if(this.controller.actionKeyJustPressed() && !ui.bottomText.opened){
             ore.mine()
         }
     }
